@@ -31,7 +31,7 @@ namespace MFlight
         private float camSmoothSpeed = 5f;
 
         [SerializeField] [Tooltip("Mouse sensitivity for the mouse flight target")]
-        private float mouseSensitivity = 3f;
+        private float mouseSensitivityX = 1f, mouseSensitivityY = 1f;
 
         [SerializeField] [Tooltip("How far the boresight and mouse flight are from the aircraft")]
         private float aimDistance = 500f;
@@ -94,11 +94,13 @@ namespace MFlight
             // When parented to something (such as an aircraft) it will inherit those
             // rotations causing unintended rotations as it gets dragged around.
             transform.parent = null;
+
+            Cursor.lockState = CursorLockMode.Locked;
         }
 
         private void Update()
         {
-            if (useFixed == false)
+            if (!useFixed)
                 UpdateCameraPos();
 
             RotateRig();
@@ -106,7 +108,7 @@ namespace MFlight
 
         private void FixedUpdate()
         {
-            if (useFixed == true)
+            if (useFixed)
                 UpdateCameraPos();
         }
 
@@ -128,14 +130,20 @@ namespace MFlight
             }
 
             // Mouse input.
-            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = -Input.GetAxis("Mouse Y") * mouseSensitivity;
+            float mouseX = Input.GetAxis("Mouse X") * mouseSensitivityX;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivityY;
 
             // Rotate the aim target that the plane is meant to fly towards.
             // Use the camera's axes in world space so that mouse motion is intuitive.
             mouseAim.Rotate(cam.right, mouseY, Space.World);
             mouseAim.Rotate(cam.up, mouseX, Space.World);
 
+            //Follow airplane rotation if not on free look
+            if (!isMouseAimFrozen) {
+                cameraRig.rotation = aircraft.transform.rotation;
+                return;
+            }
+            
             // The up vector of the camera normally is aligned to the horizon. However, when
             // looking straight up/down this can feel a bit weird. At those extremes, the camera
             // stops aligning to the horizon and instead aligns to itself.
