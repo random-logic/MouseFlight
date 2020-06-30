@@ -17,8 +17,7 @@ namespace MFlight.Demo
     [RequireComponent(typeof(Rigidbody))]
     public class Plane : MonoBehaviour
     {
-        [Header("Components")]
-        [SerializeField] private MouseFlightController controller = null;
+        #region Public Fields
 
         [Header("Physics")]
         [Tooltip("Force to push plane forwards with")] public float thrust = 100f;
@@ -29,19 +28,34 @@ namespace MFlight.Demo
         [Tooltip("Sensitivity for autopilot flight.")] public float sensitivity = 5f;
         [Tooltip("Angle at which airplane banks fully into target.")] public float aggressiveTurnAngle = 10f;
 
+        #endregion
+
+        #region Private Fields
+
+        [Header("Components")]
+        [SerializeField] private MouseFlightController controller = null;
+
         [Header("Input")]
         [SerializeField] [Range(-1f, 1f)] private float pitch = 0f;
         [SerializeField] [Range(-1f, 1f)] private float yaw = 0f;
         [SerializeField] [Range(-1f, 1f)] private float roll = 0f;
 
-        public float Pitch { set { pitch = Mathf.Clamp(value, -1f, 1f); } get { return pitch; } }
-        public float Yaw { set { yaw = Mathf.Clamp(value, -1f, 1f); } get { return yaw; } }
-        public float Roll { set { roll = Mathf.Clamp(value, -1f, 1f); } get { return roll; } }
-
         private Rigidbody rigid;
 
         private bool rollOverride = false;
         private bool pitchOverride = false;
+
+        #endregion
+
+        #region Modifiers and Accessors
+
+        public float Pitch { set { pitch = Mathf.Clamp(value, -1f, 1f); } get { return pitch; } }
+        public float Yaw { set { yaw = Mathf.Clamp(value, -1f, 1f); } get { return yaw; } }
+        public float Roll { set { roll = Mathf.Clamp(value, -1f, 1f); } get { return roll; } }
+
+        #endregion
+
+        #region MonoBehaviour Callbacks
 
         private void Awake()
         {
@@ -83,6 +97,21 @@ namespace MFlight.Demo
             pitch = (pitchOverride) ? keyboardPitch : autoPitch;
             roll = (rollOverride) ? keyboardRoll : autoRoll;
         }
+
+        private void FixedUpdate()
+        {
+            // Ultra simple flight where the plane just gets pushed forward and manipulated
+            // with torques to turn.
+            rigid.AddRelativeForce(Vector3.forward * thrust * forceMult, ForceMode.Force);
+            rigid.AddRelativeTorque(new Vector3(turnTorque.x * pitch,
+                                                turnTorque.y * yaw,
+                                                -turnTorque.z * roll) * forceMult,
+                                    ForceMode.Force);
+        }
+
+        #endregion
+
+        #region Private Methods
 
         private void RunAutopilot(Vector3 flyTarget, out float yaw, out float pitch, out float roll)
         {
@@ -129,15 +158,6 @@ namespace MFlight.Demo
             roll = Mathf.Lerp(wingsLevelRoll, agressiveRoll, wingsLevelInfluence);
         }
 
-        private void FixedUpdate()
-        {
-            // Ultra simple flight where the plane just gets pushed forward and manipulated
-            // with torques to turn.
-            rigid.AddRelativeForce(Vector3.forward * thrust * forceMult, ForceMode.Force);
-            rigid.AddRelativeTorque(new Vector3(turnTorque.x * pitch,
-                                                turnTorque.y * yaw,
-                                                -turnTorque.z * roll) * forceMult,
-                                    ForceMode.Force);
-        }
+        #endregion
     }
 }

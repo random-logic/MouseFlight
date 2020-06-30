@@ -13,6 +13,8 @@ namespace MFlight
     /// </summary>
     public class MouseFlightController : MonoBehaviour
     {
+        #region Serialized Fields
+
         [Header("Components")]
         [SerializeField] [Tooltip("Transform of the aircraft the rig follows and references")]
         private Transform aircraft = null;
@@ -40,8 +42,16 @@ namespace MFlight
         [SerializeField] [Tooltip("How far the boresight and mouse flight are from the aircraft")]
         private bool showDebugInfo = false;
 
+        #endregion
+
+        #region Private Fields
+
         private Vector3 frozenDirection = Vector3.forward;
         private bool isMouseAimFrozen = false;
+
+        #endregion
+
+        #region Public Methods
 
         /// <summary>
         /// Get a point along the aircraft's boresight projected out to aimDistance meters.
@@ -79,6 +89,10 @@ namespace MFlight
             }
         }
 
+        #endregion
+
+        #region MonoBehaviour Callbacks
+
         private void Awake()
         {
             if (aircraft == null)
@@ -110,6 +124,10 @@ namespace MFlight
                 UpdateCameraPos();
         }
 
+        #endregion
+
+        #region Private Methods
+
         private void RotateRig()
         {
             if (mouseAim == null || cam == null || cameraRig == null)
@@ -129,7 +147,7 @@ namespace MFlight
 
             // Mouse input.
             float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity;
-            float mouseY = -Input.GetAxis("Mouse Y") * mouseSensitivity;
+            float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity;
 
             // Rotate the aim target that the plane is meant to fly towards.
             // Use the camera's axes in world space so that mouse motion is intuitive.
@@ -211,5 +229,7 @@ namespace MFlight
                 Gizmos.color = oldColor;
             }
         }
+
+        #endregion
     }
 }
