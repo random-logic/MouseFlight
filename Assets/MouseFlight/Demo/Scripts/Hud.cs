@@ -39,16 +39,22 @@ namespace MFlight.Demo
 
         private void UpdateGraphics(MouseFlightController controller)
         {
-            if (boresight != null)
-            {
+            if (boresight == null)
+                Debug.LogError("Hud is trying to access boresight but it is null.");
+
+            if (mousePos == null)
+                Debug.LogError("Hud is trying to access mousePos but it is null.");
+
+            if (!mouseFlight.IsMouseAimFrozen) {
                 boresight.position = playerCam.WorldToScreenPoint(controller.BoresightPos);
                 boresight.gameObject.SetActive(boresight.position.z > 1f);
-            }
 
-            if (mousePos != null)
-            {
                 mousePos.position = playerCam.WorldToScreenPoint(controller.MouseAimPos);
                 mousePos.gameObject.SetActive(mousePos.position.z > 1f);
+            }
+            else {
+                boresight.anchoredPosition = Vector2.zero;
+                mousePos.anchoredPosition = Vector2.zero;
             }
         }
 

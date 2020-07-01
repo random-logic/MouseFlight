@@ -40,8 +40,9 @@ namespace MFlight
         [SerializeField] [Tooltip("How far the boresight and mouse flight are from the aircraft")]
         private bool showDebugInfo = false;
 
-        private Vector3 frozenDirection = Vector3.forward;
         private bool isMouseAimFrozen = false;
+        private bool setMouseAim = false;
+        private bool isFreeLook = false;
 
         /// <summary>
         /// Get a point along the aircraft's boresight projected out to aimDistance meters.
@@ -75,6 +76,24 @@ namespace MFlight
                 else
                 {
                     return transform.forward * aimDistance;
+                }
+            }
+        }
+
+        public bool IsMouseAimFrozen {
+            get 
+            {
+                return isMouseAimFrozen;
+            }
+            set
+            {
+                isMouseAimFrozen = value;
+                if (value) {
+                    setMouseAim = true;
+                }
+                else if (setMouseAim) {
+                    mouseAim.forward = aircraft.forward;
+                    setMouseAim = false;
                 }
             }
         }
@@ -120,13 +139,13 @@ namespace MFlight
             // Freeze the mouse aim direction when the free look key is pressed.
             if (Input.GetKeyDown(KeyCode.C))
             {
-                isMouseAimFrozen = true;
-                frozenDirection = mouseAim.forward;
+                IsMouseAimFrozen = true;
+                isFreeLook = true;
             }
-            else if  (Input.GetKeyUp(KeyCode.C))
+            else if (Input.GetKeyUp(KeyCode.C))
             {
-                isMouseAimFrozen = false;
-                mouseAim.forward = frozenDirection;
+                IsMouseAimFrozen = false;
+                isFreeLook = false;
             }
 
             // Mouse input.
@@ -139,8 +158,8 @@ namespace MFlight
             mouseAim.Rotate(cam.up, mouseX, Space.World);
 
             //Follow airplane rotation if not on free look
-            if (!isMouseAimFrozen) {
-                cameraRig.rotation = aircraft.transform.rotation;
+            if (!isFreeLook) {
+                cameraRig.rotation = aircraft.rotation;
                 return;
             }
             
@@ -159,7 +178,7 @@ namespace MFlight
         private Vector3 GetFrozenMouseAimPos()
         {
             if (mouseAim != null)
-                return mouseAim.position + (frozenDirection * aimDistance);
+                return mouseAim.position + (aircraft.forward * aimDistance);
             else
                 return transform.forward * aimDistance;
         }

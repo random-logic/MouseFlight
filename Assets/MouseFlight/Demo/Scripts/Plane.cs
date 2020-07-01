@@ -60,6 +60,8 @@ namespace MFlight.Demo
 
             if (controller == null)
                 Debug.LogError(name + ": Plane - Missing reference to MouseFlightController!");
+
+            Debug.Log(throttle);
         }
 
         private void FixedUpdate()
@@ -92,6 +94,13 @@ namespace MFlight.Demo
                 yawOverride = true;
             }
 
+            if (rollOverride || pitchOverride || yawOverride) {
+                if (controller != null) controller.IsMouseAimFrozen = true;
+            }
+            else {
+                controller.IsMouseAimFrozen = false;
+            }
+
             // Calculate the autopilot stick inputs.
             float autoYaw = 0f;
             float autoPitch = 0f;
@@ -109,9 +118,11 @@ namespace MFlight.Demo
 
             if (Input.GetKey(KeyCode.LeftShift)) {
                 throttle = Mathf.Clamp(throttle + throttleDelta, 0, 1);
+                Debug.Log(throttle);
             }
             else if (Input.GetKey(KeyCode.LeftControl)) {
                 throttle = Mathf.Clamp(throttle - throttleDelta, 0, 1);
+                Debug.Log(throttle);
             }
 
             // Pass the input to the aeroplane
