@@ -3705,7 +3705,6 @@ GameObject:
   - component: {fileID: 3086662670834340901}
   - component: {fileID: 3086662670827807178}
   - component: {fileID: 3086662670827807176}
-  - component: {fileID: 3086662670827807174}
   m_Layer: 8
   m_Name: AircraftJet
   m_TagString: Player
@@ -3713,32 +3712,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &3086662670827807174
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3086662670827807173}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 235a6615124795442b98c1f03500003e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_MaxEnginePower: 40
-  m_Lift: 0.002
-  m_ZeroLiftSpeed: 300
-  m_RollEffect: 0.75
-  m_PitchEffect: 0.75
-  m_YawEffect: 0.2
-  m_BankedTurnEffect: 0.5
-  m_AerodynamicEffect: 0.02
-  m_AutoTurnPitch: 0.5
-  m_AutoRollLevel: 0.1
-  m_AutoPitchLevel: 0.1
-  m_AirBrakesEffect: 3
-  m_ThrottleChangeSpeed: 0.3
-  m_DragIncreaseFactor: 0.001
 --- !u!1 &3086662670827807175
 GameObject:
   m_ObjectHideFlags: 0
@@ -3777,6 +3750,7 @@ MonoBehaviour:
   roll: 0
   mouseSensitivityX: 0.5
   mouseSensitivityY: 0.25
+  throttleDelta: 0.1
 --- !u!1 &3086662670827807177
 GameObject:
   m_ObjectHideFlags: 0

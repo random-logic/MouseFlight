@@ -37,6 +37,7 @@ namespace MFlight.Demo
         [SerializeField] [Range(-1f, 1f)] private float yaw = 0f;
         [SerializeField] [Range(-1f, 1f)] private float roll = 0f;
         [Range(0.10f, 20f)] public float mouseSensitivityX, mouseSensitivityY;
+        [Range(0, 1)] public float throttleDelta;
 
         public float Pitch { set { pitch = Mathf.Clamp(value, -1f, 1f); } get { return pitch; } }
         public float Yaw { set { yaw = Mathf.Clamp(value, -1f, 1f); } get { return yaw; } }
@@ -45,6 +46,10 @@ namespace MFlight.Demo
         private Rigidbody rigid;
 
         private bool rollOverride = false;
+        private bool pitchOverride = false;
+        private bool yawOverride = false;
+
+        private float throttle = 0;
 
         private void Awake()
         {
@@ -62,11 +67,29 @@ namespace MFlight.Demo
             // When the player commands their own stick input, it should override what the
             // autopilot is trying to do.
             rollOverride = false;
+            pitchOverride = false;
+            yawOverride = false;
 
             float keyboardRoll = Input.GetAxis("Horizontal");
             if (Mathf.Abs(keyboardRoll) > .25f)
             {
                 rollOverride = true;
+            }
+
+            float keyboardPitch = Input.GetAxis("Vertical");
+            if (Mathf.Abs(keyboardPitch) > .25f)
+            {
+                pitchOverride = true;
+            }
+
+            float keyboardYaw = 0;
+            if (Input.GetKey(KeyCode.Q)) {
+                keyboardYaw = 1;
+                yawOverride = true;
+            }
+            else if (Input.GetKey(KeyCode.E)) {
+                keyboardYaw = -1;
+                yawOverride = true;
             }
 
             // Calculate the autopilot stick inputs.
@@ -77,14 +100,19 @@ namespace MFlight.Demo
                 RunAutopilot(controller.MouseAimPos, out autoYaw, out autoPitch, out autoRoll);
 
             // Use either keyboard or autopilot input.
-            yaw = autoYaw;
-            pitch = autoPitch;
+            yaw = (yawOverride) ? keyboardYaw : autoYaw;
+            pitch = (pitchOverride) ? keyboardPitch : autoPitch;
             roll = (rollOverride) ? keyboardRoll : autoRoll;
 
             // Read input for the throttle and airbrakes of the aeroplane.
-            bool airBrakes = Input.GetKey(KeyCode.LeftShift);
-            float throttle = Input.GetAxis("Mouse ScrollWheel"); //Tried to use scrollwheel, but doesn't work even after changing sensitivity (probably because of sampling rate)
-            Debug.Log(throttle);
+            bool airBrakes = Input.GetKey(KeyCode.Space);
+
+            if (Input.GetKey(KeyCode.LeftShift)) {
+                throttle = Mathf.Clamp(throttle + throttleDelta, 0, 1);
+            }
+            else if (Input.GetKey(KeyCode.LeftControl)) {
+                throttle = Mathf.Clamp(throttle - throttleDelta, 0, 1);
+            }
 
             // Pass the input to the aeroplane
             m_Aeroplane.Move(roll, pitch, yaw, throttle, airBrakes);
