@@ -38,14 +38,15 @@ namespace UnityStandardAssets.Vehicles.Aeroplane
         // Update is called once per frame
         private void Update()
         {
-            if (m_State == GearState.Lowered && m_Plane.Altitude > raiseAtAltitude && m_Rigidbody.velocity.y > 0)
-            {
-                m_State = GearState.Raised;
-            }
-
-            if (m_State == GearState.Raised && m_Plane.Altitude < lowerAtAltitude && m_Rigidbody.velocity.y < 0)
-            {
-                m_State = GearState.Lowered;
+            if (Input.GetKey(KeyCode.G)) {
+                if (m_State == GearState.Lowered)
+                {
+                    m_State = GearState.Raised;
+                }
+                else if (m_State == GearState.Raised)
+                {
+                    m_State = GearState.Lowered;
+                }
             }
 
             // set the parameter on the animator controller to trigger the appropriate animation

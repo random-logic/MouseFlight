@@ -49,8 +49,6 @@ namespace MFlight.Demo
         private bool pitchOverride = false;
         private bool yawOverride = false;
 
-        private float throttle = 0;
-
         private void Awake()
         {
             // Set up the reference to the aeroplane controller.
@@ -60,8 +58,6 @@ namespace MFlight.Demo
 
             if (controller == null)
                 Debug.LogError(name + ": Plane - Missing reference to MouseFlightController!");
-
-            Debug.Log(throttle);
         }
 
         private void FixedUpdate()
@@ -115,14 +111,13 @@ namespace MFlight.Demo
 
             // Read input for the throttle and airbrakes of the aeroplane.
             bool airBrakes = Input.GetKey(KeyCode.Space);
+            float throttle = 0;
 
             if (Input.GetKey(KeyCode.LeftShift)) {
-                throttle = Mathf.Clamp(throttle + throttleDelta, 0, 1);
-                Debug.Log(throttle);
+                throttle = 1;
             }
             else if (Input.GetKey(KeyCode.LeftControl)) {
-                throttle = Mathf.Clamp(throttle - throttleDelta, 0, 1);
-                Debug.Log(throttle);
+                throttle = -1;
             }
 
             // Pass the input to the aeroplane
