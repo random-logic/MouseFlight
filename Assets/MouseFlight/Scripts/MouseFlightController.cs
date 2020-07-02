@@ -55,7 +55,7 @@ namespace MFlight
             {
                 return aircraft == null
                      ? transform.forward * aimDistance
-                     : (aircraft.transform.forward * aimDistance) + aircraft.transform.position;
+                     : (cameraRig.forward * aimDistance) + aircraft.transform.position;
             }
         }
 

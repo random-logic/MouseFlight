@@ -18,9 +18,6 @@ namespace UnityStandardAssets.Vehicles.Aeroplane
         // this script detects the raise/lower condition and sets a parameter on
         // the animator to actually play the animation to raise or lower the gear.
 
-        public float raiseAtAltitude = 40;
-        public float lowerAtAltitude = 40;
-
         private GearState m_State = GearState.Lowered;
         private Animator m_Animator;
         private Rigidbody m_Rigidbody;

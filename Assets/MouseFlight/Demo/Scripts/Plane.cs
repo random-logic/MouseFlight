@@ -82,11 +82,11 @@ namespace MFlight.Demo
 
             float keyboardYaw = 0;
             if (Input.GetKey(KeyCode.Q)) {
-                keyboardYaw = 1;
+                keyboardYaw = -1;
                 yawOverride = true;
             }
             else if (Input.GetKey(KeyCode.E)) {
-                keyboardYaw = -1;
+                keyboardYaw = 1;
                 yawOverride = true;
             }
 
